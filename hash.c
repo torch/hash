@@ -4,6 +4,8 @@
 #include "luaT.h"
 #include "TH.h"
 
+#include <stdint.h>
+
 typedef uint32_t (*libhash_hashfunc32_t)(const void *data, size_t len, uint32_t seed);
 typedef uint64_t (*libhash_hashfunc64_t)(const void *data, size_t len, uint64_t seed);
 

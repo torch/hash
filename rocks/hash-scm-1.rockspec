@@ -2,7 +2,7 @@ package = "hash"
 version = "scm-1"
 
 source = {
-   url = "git://github.com/torch/hash-ffi.git"
+   url = "git://github.com/torch/hash.git"
 }
 
 description = {
