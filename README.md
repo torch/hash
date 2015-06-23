@@ -1,7 +1,11 @@
 Hash functions for Torch
 ========================
 
-This package provides few hashing capabilities for Torch. At this time it supports both XXH64 and FNV64 hashes.
+This package provides few hashing capabilities for Torch. At this time it supports both XXH64 and FNV64 hashes. By default, XXH64 hash is used (much faster on large chunk of data).
+
+Data which can be hashed is Lua strings, Lua numbers, or CPU Torch tensor types (Byte, Char, Short, Int, Long, Float, Double).
+
+Concerning the computation of the tensor hash, only the data (not the shape) of the tensor is considered. Two tensors containing the same data, but with different strides, will thus have the exact same hash. However, computing the hash of a non-contiguous tensor is much slower than computing the hash of a contiguous tensor.
 
 # Usage
 
