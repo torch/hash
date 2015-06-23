@@ -1,90 +1,29 @@
 #include <stdint.h>
 #include <stdlib.h>
+#include <string.h>
 
-#define FNV_32_PRIME ((uint32_t)0x01000193)
-
-uint32_t libhash_fnv_32(const void *buf, size_t len, uint32_t hval)
-{
-  unsigned char *bp = (unsigned char *)buf;/* start of buffer */
-  unsigned char *be = bp + len;/* beyond end of buffer */
-
-  /*
-   * FNV-1 hash each octet in the buffer
-   */
-  while (bp < be) {
-
-    /* multiply by the 32 bit FNV magic prime mod 2^32 */
-#if defined(NO_FNV_GCC_OPTIMIZATION)
-    hval *= FNV_32_PRIME;
-#else
-    hval += (hval<<1) + (hval<<4) + (hval<<7) + (hval<<8) + (hval<<24);
-#endif
-
-    /* xor the bottom with the current octet */
-    hval ^= (uint32_t)*bp++;
-  }
-
-  /* return our new hash value */
-  return hval;
-}
-
-uint32_t libhash_fnv_32a(const void *buf, size_t len, uint32_t hval)
-{
-  unsigned char *bp = (unsigned char *)buf;/* start of buffer */
-  unsigned char *be = bp + len;/* beyond end of buffer */
-
-  /*
-   * FNV-1a hash each octet in the buffer
-   */
-  while (bp < be) {
-
-    /* xor the bottom with the current octet */
-    hval ^= (uint32_t)*bp++;
-
-    /* multiply by the 32 bit FNV magic prime mod 2^32 */
-#if defined(NO_FNV_GCC_OPTIMIZATION)
-    hval *= FNV_32_PRIME;
-#else
-    hval += (hval<<1) + (hval<<4) + (hval<<7) + (hval<<8) + (hval<<24);
-#endif
-  }
-
-  /* return our new hash value */
-  return hval;
-}
+#include "hash.h"
+#include "hash.c.h"
 
 #define FNV_64_PRIME ((uint64_t)0x100000001b3ULL)
 
-uint64_t libhash_fnv_64(const void *buf, size_t len, uint64_t hval)
+typedef struct {
+  struct LHHashVTable *vtable;
+  uint64_t hval;
+} LHFNV64Hash;
+
+static void FNV64_reset(LHHash* state_in, unsigned long long seed)
 {
-  unsigned char *bp = (unsigned char *)buf;/* start of buffer */
-  unsigned char *be = bp + len;/* beyond end of buffer */
-
-  /*
-   * FNV-1 hash each octet of the buffer
-   */
-  while (bp < be) {
-
-    /* multiply by the 64 bit FNV magic prime mod 2^64 */
-#if defined(NO_FNV_GCC_OPTIMIZATION)
-    hval *= FNV_64_PRIME;
-#else /* NO_FNV_GCC_OPTIMIZATION */
-    hval += (hval << 1) + (hval << 4) + (hval << 5) +
-      (hval << 7) + (hval << 8) + (hval << 40);
-#endif /* NO_FNV_GCC_OPTIMIZATION */
-
-    /* xor the bottom with the current octet */
-    hval ^= (uint64_t)*bp++;
-  }
-
-  /* return our new hash value */
-  return hval;
+  LHFNV64Hash *state = (LHFNV64Hash*)state_in;
+  state->hval = seed;
 }
 
-uint64_t libhash_fnv_64a(const void *buf, size_t len, uint64_t hval)
+static void FNV64_update(LHHash* state_in, const void* buf, size_t len)
 {
+  LHFNV64Hash *state = (LHFNV64Hash*)state_in;
   unsigned char *bp = (unsigned char *)buf;/* start of buffer */
   unsigned char *be = bp + len;/* beyond end of buffer */
+  uint64_t hval = state->hval;
 
   /*
    * FNV-1a hash each octet of the buffer
@@ -104,5 +43,40 @@ uint64_t libhash_fnv_64a(const void *buf, size_t len, uint64_t hval)
   }
 
   /* return our new hash value */
-  return hval;
+  state->hval = hval;
+}
+
+static unsigned long long FNV64_digest(LHHash* state_in)
+{
+  LHFNV64Hash *state = (LHFNV64Hash*)state_in;
+  return state->hval;
+}
+
+static LHHash* FNV64_clone(LHHash *state)
+{
+  LHHash *newstate = (LHHash*)malloc(sizeof(LHFNV64Hash));
+  memcpy(newstate, state, sizeof(LHFNV64Hash));
+  return newstate;
+}
+
+static void FNV64_free(LHHash* state)
+{
+  free(state);
+};
+
+static struct LHHashVTable LHFNV64VTable = {
+  FNV64_reset,
+  FNV64_update,
+  FNV64_digest,
+  FNV64_clone,
+  FNV64_free
+};
+
+LHHash* LHFNV64_new(void)
+{
+  LHHash *state = (LHHash*)malloc(sizeof(LHFNV64Hash));
+  if(state) {
+    state->vtable = &LHFNV64VTable;
+  }
+  return state;
 }

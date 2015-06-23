@@ -3,10 +3,10 @@ cmake_minimum_required (VERSION 2.8)
 find_package(Torch REQUIRED)
 
 set(src
+  libhash.c
   hash.c
+  xxh.c
   fnv.c
-  lookup.c
-  murmur.c
 )
 
 set(luasrc

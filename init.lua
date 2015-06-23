@@ -1,1 +1,2 @@
-require 'libhash'
+return require 'libhash'
+
