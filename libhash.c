@@ -88,6 +88,7 @@ static int libhash_hash(lua_State *L)
       state = LHFNV64_new();
     else
       luaL_error(L, "invalid hash type (XXH64 || FNV64 expected)");
+    freestate = 1;
   } else if((nopt >= 2 && nopt <= 4) && luaT_toudata(L, 2, "torch.Hash")) {
     state = luaT_toudata(L, 2, "torch.Hash");
     seed = (unsigned long long)luaL_optlong(L, 3, 0);
