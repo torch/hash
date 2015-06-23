@@ -70,8 +70,8 @@ static int libhash_hash(lua_State *L)
   LHHash *state = NULL;
   unsigned long long seed = 0;
   int freestate = 0;
-  uint64_t mod = 0;
-  uint64_t res = 0;
+  unsigned long long mod = 0;
+  unsigned long long res = 0;
 
   if(nopt == 1 || (nopt >= 2 && nopt <= 3 && lua_isnumber(L, 2))) {
     state = LHXXH64_new();
@@ -145,9 +145,9 @@ static int libhash_LHHash_update(lua_State *L)
 static int libhash_LHHash_hash(lua_State *L)
 {
   LHHash *state = luaT_checkudata(L, 1, "torch.Hash");
-  uint64_t seed = (uint64_t)luaL_optlong(L, 3, 0);
-  uint64_t mod = (uint64_t)luaL_optlong(L, 4, LH_MAX_MOD);
-  uint64_t res = 0;
+  unsigned long long seed = (unsigned long long)luaL_optlong(L, 3, 0);
+  unsigned long long mod = (unsigned long long)luaL_optlong(L, 4, LH_MAX_MOD);
+  unsigned long long res = 0;
   luaL_argcheck(L, mod > 0, 4, "modulo should be positive");
   LHHash_reset(state, seed);
   libhash_updatehash(L, state, 2);

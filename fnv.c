@@ -1,15 +1,14 @@
-#include <stdint.h>
 #include <stdlib.h>
 #include <string.h>
 
 #include "hash.h"
 #include "hash.c.h"
 
-#define FNV_64_PRIME ((uint64_t)0x100000001b3ULL)
+#define FNV_64_PRIME ((unsigned long long)0x100000001b3ULL)
 
 typedef struct {
   struct LHHashVTable *vtable;
-  uint64_t hval;
+  unsigned long long hval;
 } LHFNV64Hash;
 
 static void FNV64_reset(LHHash* state_in, unsigned long long seed)
@@ -23,7 +22,7 @@ static void FNV64_update(LHHash* state_in, const void* buf, size_t len)
   LHFNV64Hash *state = (LHFNV64Hash*)state_in;
   unsigned char *bp = (unsigned char *)buf;/* start of buffer */
   unsigned char *be = bp + len;/* beyond end of buffer */
-  uint64_t hval = state->hval;
+  unsigned long long hval = state->hval;
 
   /*
    * FNV-1a hash each octet of the buffer
@@ -31,7 +30,7 @@ static void FNV64_update(LHHash* state_in, const void* buf, size_t len)
   while (bp < be) {
 
     /* xor the bottom with the current octet */
-    hval ^= (uint64_t)*bp++;
+    hval ^= (unsigned long long)*bp++;
 
     /* multiply by the 64 bit FNV magic prime mod 2^64 */
 #if defined(NO_FNV_GCC_OPTIMIZATION)
