@@ -11,7 +11,7 @@
   static void TH##TYPE##Tensor_hashUpdate(TH##TYPE##Tensor *tensor, LHHash *hash) \
   {                                                                     \
     TH_TENSOR_APPLY(CTYPE, tensor,                                      \
-                    LHHash_update(hash, tensor_data, tensor_size); break;); \
+                    LHHash_update(hash, tensor_data, tensor_size*sizeof(CTYPE)); break;); \
   }
 
 IMPLEMENT_THTENSOR_HASH(Byte, unsigned char);
