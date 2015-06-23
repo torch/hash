@@ -214,7 +214,6 @@ int luaopen_libhash(lua_State *L)
 
   lua_newtable(L);
   luaL_register(L, NULL, libhash__);
-  luaT_stackdump(L);
 
   return 1; /* hash */
 }
