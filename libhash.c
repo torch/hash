@@ -24,12 +24,12 @@ IMPLEMENT_THTENSOR_HASH(Double, double);
 
 static void libhash_updatehash(lua_State *L, LHHash *state, int idx)
 {
-  if(lua_isstring(L, idx)) {
+  if(lua_type(L, idx) == LUA_TSTRING) {
     size_t len = 0;
     const char *str = lua_tolstring(L, idx, &len);
     LHHash_update(state, str, len);
   }
-  else if(lua_isnumber(L, idx)) {
+  else if(lua_type(L, idx) == LUA_TNUMBER) {
     lua_Number num = lua_tonumber(L, idx);
     LHHash_update(state, &num, sizeof(lua_Number));
   }
