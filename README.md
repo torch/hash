@@ -71,7 +71,7 @@ Reset the given state using the given seed.
 Hash given `stuff` and update the state accordingly. `stuff` might be a Lua string, a Lua number, or a CPU Torch tensor.
 This method can be called several times in a row, if needed.
 
-### state:digest(stuff, [mod])
+### state:digest([mod])
 
 Returns the current hash (modulo `mod`) for the data which has been given to the state so far (with `update()`). By default `mod` is `2^53`, which
 is the largest long value that a double can store with no precision loss.
